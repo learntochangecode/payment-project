@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     /**
-     * 用于测试服务的运行状态和连通性
+     * 用于测试服务的连通性
      * @return hello
      */
-    @GetMapping("/")
+    @GetMapping("/hello")
     public String hello(){
-        log.info("payment-project is working");
         return "payment-project is working";
     }
 
