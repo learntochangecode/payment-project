@@ -12,10 +12,18 @@ public class HelloController {
      * 用于测试服务的运行状态和连通性
      * @return hello
      */
-    @GetMapping("/hello")
+    @GetMapping("/")
     public String hello(){
         log.info("payment-project is working");
         return "payment-project is working";
+    }
+
+    @GetMapping("/logTest")
+    public String log(){
+        log.info("---测试info---");
+        log.warn("---测试warn---");
+        log.error("---测试error---");
+        return "ok";
     }
 
 }
