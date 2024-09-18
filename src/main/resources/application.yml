@@ -3,3 +3,20 @@ spring:
     name: payment-project
   profiles:
     active: dev
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  info:
+    env:
+      enabled: true
+    os:
+      enabled: true
+    java:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+    env:
+      show-values: always
