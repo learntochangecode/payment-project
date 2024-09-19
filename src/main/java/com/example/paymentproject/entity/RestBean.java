@@ -17,8 +17,20 @@ public record RestBean<T>(int code, T data, String message) {
         return new RestBean<>(code, data, "请求失败");
     }
 
+    public static <T> RestBean<T> fail(int code, String message) {
+        return new RestBean<>(code, null, message);
+    }
+
     public static <T> RestBean<T> fail(T data) {
         return new RestBean<>(400, data, "请求失败");
+    }
+
+    public static <T> RestBean<T> unauthorize() {
+        return fail(401, "用户名或密码错误");
+    }
+
+    public static <T> RestBean<T> forbidden() {
+        return fail(403, "没有权限访问");
     }
 
     public String asJsonString() {

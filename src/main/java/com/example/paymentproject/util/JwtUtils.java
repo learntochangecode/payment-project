@@ -1,16 +1,24 @@
 package com.example.paymentproject.util;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
 
+@Slf4j
 @Component
 public class JwtUtils {
 
@@ -20,18 +28,40 @@ public class JwtUtils {
     @Value("${jwt.expire}")
     private int expire;
 
-    public String createJwt(UserDetails userDetails, int id, String username){
+    public String createJwt(UserDetails userDetails, int id, String username) {
         Algorithm algorithm = Algorithm.HMAC256(key);
         return JWT.create()
-                .withClaim("id",id)
+                .withClaim("id", id)
                 .withClaim("username", username)
-                .withClaim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toString())
+                .withClaim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .withExpiresAt(getExpireTime())
                 .withIssuedAt(new Date())
                 .sign(algorithm);
     }
 
-    private Date getExpireTime(){
+    public DecodedJWT resolveJwt(String headerToken) {
+        String token = this.convertToken(headerToken);
+        if (token == null) return null;
+        Algorithm algorithm = Algorithm.HMAC256(key);
+        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+        try {
+            DecodedJWT decode = jwtVerifier.verify(token);
+            Date expire = decode.getExpiresAt();
+            return new Date().after(expire) ? null : decode;
+        } catch (JWTVerificationException e) {
+            return null;
+        }
+    }
+
+    public UserDetails toUser(DecodedJWT jwt){
+        Map<String, Claim> claims = jwt.getClaims();
+        return User.withUsername(claims.get("username").asString())
+                .password("******")
+                .authorities(claims.get("authorities").asArray(String.class))
+                .build();
+    }
+
+    private Date getExpireTime() {
         /*
          * Java8之前可以用calendar
          * Calendar calendar = Calendar.getInstance();
@@ -40,5 +70,17 @@ public class JwtUtils {
          */
         LocalDateTime localDate = LocalDateTime.now().plusHours(expire);
         return Date.from(localDate.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private String convertToken(String headerToken) {
+        if (headerToken == null || !headerToken.startsWith("Bearer ")) {
+            return null;
+        }
+        return headerToken.replace("Bearer ", "");
+    }
+
+    public Integer toId(DecodedJWT jwt){
+        Map<String, Claim> claims = jwt.getClaims();
+        return claims.get("id").asInt();
     }
 }
