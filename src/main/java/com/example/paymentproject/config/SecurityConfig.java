@@ -1,6 +1,8 @@
 package com.example.paymentproject.config;
 
 import com.example.paymentproject.entity.RestBean;
+import com.example.paymentproject.util.JwtUtils;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.io.IOException;
@@ -18,6 +21,9 @@ import java.io.IOException;
 @Slf4j
 @Configuration
 public class SecurityConfig {
+    @Resource
+    private JwtUtils jwtUtils;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -42,7 +48,9 @@ public class SecurityConfig {
                                         Authentication authentication) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(RestBean.success().asJsonString());
+        User user = (User)authentication.getPrincipal();
+        String jwt = jwtUtils.createJwt(user,1,"test");
+        response.getWriter().write(RestBean.success(jwt).asJsonString());
     }
 
     public void onAuthenticationFailure(HttpServletRequest request,

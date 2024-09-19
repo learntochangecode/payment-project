@@ -20,3 +20,6 @@ management:
       show-details: always
     env:
       show-values: always
+jwt:
+  key: mfo32kt6r
+  expire: 7
