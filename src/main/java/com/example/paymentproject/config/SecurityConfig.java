@@ -93,6 +93,11 @@ public class SecurityConfig {
                                 Authentication authentication) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(RestBean.unauthorize().asJsonString());
+        String authorization = request.getHeader("Authorization");
+        if (jwtUtils.deleteToken(authorization)){
+            response.getWriter().write(RestBean.success("退出登录成功").asJsonString());
+        } else{
+            response.getWriter().write(RestBean.fail("退出登录失败").asJsonString());
+        }
     }
 }

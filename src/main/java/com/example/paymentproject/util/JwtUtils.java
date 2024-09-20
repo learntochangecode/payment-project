@@ -6,8 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import static com.example.paymentproject.util.Const.JWT_BLACKLIST;
 
 @Slf4j
 @Component
@@ -28,15 +34,48 @@ public class JwtUtils {
     @Value("${jwt.expire}")
     private int expire;
 
+    @Resource
+    private StringRedisTemplate template;
+
+    public static void main(String[] args) {
+        String a = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzI2ODMxNzkxLCJpYXQiOjE3MjY4MjA5OTEsImF1dGhvcml0aWVzIjpbXSwidXNlcm5hbWUiOiJ0ZXN0In0.w7Zz7vOhhgAkSP4E0GTtXQuQE1Cm-Gfa89kEKxLi02I";
+        System.out.println(a.replace("Bearer ", ""));
+    }
+
     public String createJwt(UserDetails userDetails, int id, String username) {
         Algorithm algorithm = Algorithm.HMAC256(key);
         return JWT.create()
+                .withJWTId(UUID.randomUUID().toString())
                 .withClaim("id", id)
                 .withClaim("username", username)
                 .withClaim("authorities", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .withExpiresAt(getExpireTime())
                 .withIssuedAt(new Date())
                 .sign(algorithm);
+    }
+
+    public boolean deleteToken(String headerToken) {
+        String token = this.convertToken(headerToken);
+        Algorithm algorithm = Algorithm.HMAC256(key);
+        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+        try {
+            DecodedJWT decodedJWT = jwtVerifier.verify(token);
+            String uuid = decodedJWT.getId();
+            if (isInvalidToken(uuid)) {
+                return true;
+            }
+            Date date = decodedJWT.getExpiresAt();
+            long expire = Math.max(date.getTime() - new Date().getTime() , 0);
+            if (expire == 0) return true;
+            template.opsForValue().set(JWT_BLACKLIST + uuid, "", expire, TimeUnit.MILLISECONDS);
+        } catch (JWTVerificationException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isInvalidToken(String uuid) {
+        return Boolean.TRUE.equals(template.hasKey(JWT_BLACKLIST + uuid));
     }
 
     public DecodedJWT resolveJwt(String headerToken) {
@@ -46,19 +85,12 @@ public class JwtUtils {
         JWTVerifier jwtVerifier = JWT.require(algorithm).build();
         try {
             DecodedJWT decode = jwtVerifier.verify(token);
+            if (!isInvalidToken(decode.getId())) return null;
             Date expire = decode.getExpiresAt();
             return new Date().after(expire) ? null : decode;
         } catch (JWTVerificationException e) {
             return null;
         }
-    }
-
-    public UserDetails toUser(DecodedJWT jwt){
-        Map<String, Claim> claims = jwt.getClaims();
-        return User.withUsername(claims.get("username").asString())
-                .password("******")
-                .authorities(claims.get("authorities").asArray(String.class))
-                .build();
     }
 
     private Date getExpireTime() {
@@ -79,7 +111,15 @@ public class JwtUtils {
         return headerToken.replace("Bearer ", "");
     }
 
-    public Integer toId(DecodedJWT jwt){
+    public UserDetails toUser(DecodedJWT jwt) {
+        Map<String, Claim> claims = jwt.getClaims();
+        return User.withUsername(claims.get("username").asString())
+                .password("******")
+                .authorities(claims.get("authorities").asArray(String.class))
+                .build();
+    }
+
+    public Integer toId(DecodedJWT jwt) {
         Map<String, Claim> claims = jwt.getClaims();
         return claims.get("id").asInt();
     }
