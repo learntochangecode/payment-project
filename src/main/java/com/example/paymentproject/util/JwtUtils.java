@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -36,11 +37,6 @@ public class JwtUtils {
 
     @Resource
     private StringRedisTemplate template;
-
-    public static void main(String[] args) {
-        String a = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzI2ODMxNzkxLCJpYXQiOjE3MjY4MjA5OTEsImF1dGhvcml0aWVzIjpbXSwidXNlcm5hbWUiOiJ0ZXN0In0.w7Zz7vOhhgAkSP4E0GTtXQuQE1Cm-Gfa89kEKxLi02I";
-        System.out.println(a.replace("Bearer ", ""));
-    }
 
     public String createJwt(UserDetails userDetails, int id, String username) {
         Algorithm algorithm = Algorithm.HMAC256(key);
@@ -76,6 +72,16 @@ public class JwtUtils {
 
     private boolean isInvalidToken(String uuid) {
         return Boolean.TRUE.equals(template.hasKey(JWT_BLACKLIST + uuid));
+    }
+
+    /**
+     * 根据配置快速计算过期时间
+     * @return 过期时间
+     */
+    public Date expireTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, expire);
+        return calendar.getTime();
     }
 
     public DecodedJWT resolveJwt(String headerToken) {

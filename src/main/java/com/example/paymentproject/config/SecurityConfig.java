@@ -1,6 +1,8 @@
 package com.example.paymentproject.config;
 
 import com.example.paymentproject.entity.RestBean;
+import com.example.paymentproject.entity.SecurityUser;
+import com.example.paymentproject.entity.vo.response.AuthorizeVO;
 import com.example.paymentproject.filter.JwtAuthorizeFilter;
 import com.example.paymentproject.util.JwtUtils;
 import jakarta.annotation.Resource;
@@ -15,7 +17,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -58,9 +59,11 @@ public class SecurityConfig {
                                         Authentication authentication) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        User user = (User)authentication.getPrincipal();
-        String jwt = jwtUtils.createJwt(user,1,"test");
-        response.getWriter().write(RestBean.success(jwt).asJsonString());
+        SecurityUser user = (SecurityUser)authentication.getPrincipal();
+        String jwt = jwtUtils.createJwt(user,user.getId(),user.getUsername());
+        AuthorizeVO authorizeVO = new AuthorizeVO(user.getUsername(),user.getRole(),
+                jwt, jwtUtils.expireTime());
+        response.getWriter().write(RestBean.success(authorizeVO).asJsonString());
     }
 
     public void onAuthenticationFailure(HttpServletRequest request,
