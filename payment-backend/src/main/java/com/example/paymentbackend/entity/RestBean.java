@@ -20,6 +20,9 @@ public record RestBean<T>(int code, T data, String message) {
     public static <T> RestBean<T> fail(int code, String message) {
         return new RestBean<>(code, null, message);
     }
+    public static <T> RestBean<T> fail(int code, String message, T data) {
+        return new RestBean<>(code, data, message);
+    }
 
     public static <T> RestBean<T> fail(T data) {
         return new RestBean<>(400, data, "请求失败");

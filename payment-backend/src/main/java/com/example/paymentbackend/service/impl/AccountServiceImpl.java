@@ -1,8 +1,10 @@
 package com.example.paymentbackend.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.paymentbackend.entity.SecurityUser;
-import com.example.paymentbackend.entity.dto.Account;
+import com.example.paymentbackend.entity.domain.Account;
+import com.example.paymentbackend.entity.po.AccountPO;
 import com.example.paymentbackend.mapper.AccountMapper;
 import com.example.paymentbackend.service.AccountService;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +21,7 @@ import java.util.Set;
 * @createDate 2024-09-21
 */
 @Service
-public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
+public class AccountServiceImpl extends ServiceImpl<AccountMapper, AccountPO>
     implements AccountService {
 
     @Override
@@ -35,9 +37,17 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
 
     @Override
     public Account findAccountByNameOrEmail(String text) {
-        return this.query().eq("username", text).or()
+        AccountPO po = this.query().eq("username", text).or()
                 .eq("email", text)
                 .one();
+        return BeanUtil.copyProperties(po, Account.class);
+    }
+
+    @Override
+    public Account createNewAccount(Account account) {
+        AccountPO po = BeanUtil.copyProperties(account, AccountPO.class);
+        this.save(po);
+        return new Account().setUsername(account.getUsername());
     }
 }
 

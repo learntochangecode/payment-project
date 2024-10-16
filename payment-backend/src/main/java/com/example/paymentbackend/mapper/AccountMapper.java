@@ -1,7 +1,7 @@
 package com.example.paymentbackend.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.paymentbackend.entity.dto.Account;
+import com.example.paymentbackend.entity.po.AccountPO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @Entity com.example.paymentproject.entity.dto.Account
 */
 @Mapper
-public interface AccountMapper extends BaseMapper<Account> {
+public interface AccountMapper extends BaseMapper<AccountPO> {
 
 }
 

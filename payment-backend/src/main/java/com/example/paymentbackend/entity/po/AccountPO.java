@@ -1,15 +1,14 @@
-package com.example.paymentbackend.entity.dto;
+package com.example.paymentbackend.entity.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-
+import java.time.LocalDate;
 
 @TableName(value = "account")
 @Data
-public class Account implements Serializable {
+public class AccountPO implements Serializable {
     private Integer id;
 
     private String username;
@@ -20,5 +19,5 @@ public class Account implements Serializable {
 
     private String role;
 
-    private Date registerTime;
+    private LocalDate registerTime;
 }
