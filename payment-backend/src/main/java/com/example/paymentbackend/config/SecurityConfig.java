@@ -34,7 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(conf -> conf
-                        .requestMatchers("/","/login","/hello").permitAll()
+                        .requestMatchers("/api/test", "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(conf -> conf
@@ -47,10 +47,10 @@ public class SecurityConfig {
                 .sessionManagement(conf ->
                         conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(conf -> conf
-                                .accessDeniedHandler(this::onAccessDeny)
-                                .authenticationEntryPoint(this::onUnAuthentication)
-                        )
-                .addFilterBefore(jwtAuthorizeFilter , UsernamePasswordAuthenticationFilter.class)
+                        .accessDeniedHandler(this::onAccessDeny)
+                        .authenticationEntryPoint(this::onUnAuthentication)
+                )
+                .addFilterBefore(jwtAuthorizeFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -59,9 +59,9 @@ public class SecurityConfig {
                                         Authentication authentication) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        SecurityUser user = (SecurityUser)authentication.getPrincipal();
-        String jwt = jwtUtils.createJwt(user,user.getId(),user.getUsername());
-        AuthorizeVO authorizeVO = new AuthorizeVO(user.getUsername(),user.getRole(),
+        SecurityUser user = (SecurityUser) authentication.getPrincipal();
+        String jwt = jwtUtils.createJwt(user, user.getId(), user.getUsername());
+        AuthorizeVO authorizeVO = new AuthorizeVO(user.getUsername(), user.getRole(),
                 jwt, jwtUtils.expireTime());
         response.getWriter().write(RestBean.success(authorizeVO).asJsonString());
     }
@@ -75,16 +75,17 @@ public class SecurityConfig {
     }
 
     public void onUnAuthentication(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
+                                   HttpServletResponse response,
+                                   AuthenticationException authException) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(RestBean.unauthorize().asJsonString());
+        response.getWriter().write(RestBean.forbidden().asJsonString());
     }
 
+
     public void onAccessDeny(HttpServletRequest request,
-                                   HttpServletResponse response,
-                                   AccessDeniedException exception) throws IOException {
+                             HttpServletResponse response,
+                             AccessDeniedException exception) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         response.getWriter().write(RestBean.forbidden().asJsonString());
@@ -97,9 +98,9 @@ public class SecurityConfig {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
         String authorization = request.getHeader("Authorization");
-        if (jwtUtils.deleteToken(authorization)){
+        if (jwtUtils.deleteToken(authorization)) {
             response.getWriter().write(RestBean.success("退出登录成功").asJsonString());
-        } else{
+        } else {
             response.getWriter().write(RestBean.fail("退出登录失败").asJsonString());
         }
     }

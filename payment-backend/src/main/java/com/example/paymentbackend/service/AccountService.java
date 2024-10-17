@@ -1,8 +1,10 @@
 package com.example.paymentbackend.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.paymentbackend.entity.RestBean;
 import com.example.paymentbackend.entity.domain.Account;
 import com.example.paymentbackend.entity.po.AccountPO;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
@@ -15,4 +17,5 @@ public interface AccountService extends IService<AccountPO>, UserDetailsService 
 
     Account createNewAccount(Account account);
 
+    RestBean<Void> registerEmailVerifyCode(@Pattern(regexp = "(register|reset)") String type, String s, String remoteAddr);
 }

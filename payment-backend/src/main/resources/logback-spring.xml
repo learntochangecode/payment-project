@@ -2,7 +2,7 @@
 <configuration>
     <!--注册转换器-->
     <conversionRule conversionWord="traceId"
-                    converterClass="com.example.paymentproject.config.TraceIdPatternConverter" />
+                    converterClass="com.example.paymentbackend.config.TraceIdPatternConverter" />
     <!-- magenta:洋红 -->
     <!-- boldMagenta:粗红-->
     <!-- cyan:青色 -->

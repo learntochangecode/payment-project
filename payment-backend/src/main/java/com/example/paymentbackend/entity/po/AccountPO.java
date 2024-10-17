@@ -1,5 +1,7 @@
 package com.example.paymentbackend.entity.po;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 @TableName(value = "account")
 @Data
 public class AccountPO implements Serializable {
+    @TableId(type = IdType.AUTO, value = "id")
     private Integer id;
 
     private String username;
