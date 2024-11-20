@@ -6,13 +6,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.5</version>
-        <relativePath/>
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>payment-backend</artifactId>
+    <artifactId>payment-merchant</artifactId>
     <version>1.0</version>
-    <name>payment-backend</name>
-    <description>payment-backend</description>
+    <name>payment-merchant</name>
+    <description>payment-merchant</description>
     <url/>
     <licenses>
         <license/>
