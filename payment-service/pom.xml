@@ -3,11 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
-    <artifactId>payment-merchant</artifactId>
+    <artifactId>payment-service</artifactId>
     <version>1.0.0</version>
-    <name>payment-merchant</name>
-    <description>payment-merchant商户模块</description>
+    <name>payment-service</name>
+    <description>payment-service公共服务层</description>
 
     <parent>
         <groupId>com.example</groupId>
@@ -15,10 +14,11 @@
         <version>1.0.0</version>
     </parent>
 
+
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>payment-service</artifactId>
+            <artifactId>payment-core</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>

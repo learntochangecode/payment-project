@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!--注册转换器-->
-    <conversionRule conversionWord="traceId"
-                    converterClass="com.example.paymentbackend.config.TraceIdPatternConverter" />
+<!--    <conversionRule conversionWord="traceId"-->
+<!--                    converterClass="com.example.paymentbackend.config.TraceIdPatternConverter" />-->
     <!-- magenta:洋红 -->
     <!-- boldMagenta:粗红-->
     <!-- cyan:青色 -->
@@ -13,10 +13,10 @@
     <!-- green:绿色 -->
     <!-- blue:蓝色 -->
     <property name="CONSOLE_LOG_PATTERN"
-              value="%magenta(%date{yyyy-MM-dd HH:mm:ss}) | %highlight(%-5level) | %green(%traceId) | %thread | %logger | %msg%n"/>
+              value="%magenta(%date{yyyy-MM-dd HH:mm:ss}) | %highlight(%-5level) | %thread | %logger | %msg%n"/>
     <!--文件日志格式-->
     <property name="FILE_LOG_PATTERN"
-              value="%date{yyyy-MM-dd HH:mm:ss} | %-5level | %traceId | %thread | %logger | %msg%n"/>
+              value="%date{yyyy-MM-dd HH:mm:ss} | %-5level | %thread | %logger | %msg%n"/>
 
     <!--  ch.qos.logback.core.ConsoleAppender是专用于控制台的Appender  -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
