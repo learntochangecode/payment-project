@@ -7,9 +7,9 @@ spring:
       port: 6379
       database: 5
   datasource:
-    url: jdbc:mysql://123.249.6.121:28756/test?useUnicode=true&charset=utf8mb4&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&charset=utf8mb4&serverTimezone=Asia/Shanghai
     username: root
-    password: mariadbwzy@2024
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 jwt:
   key: mfo32kt6r
