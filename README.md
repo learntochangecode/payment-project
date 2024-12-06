@@ -6,7 +6,7 @@
 
 ## 🌟 Overview
 
-OpenPaymentHub is a comprehensive open-source payment system that provides a complete solution for payment processing, transaction management, and merchant services. Built with modern architecture and industry best practices, it offers a robust and scalable platform for handling various payment scenarios.
+Payment-project is a comprehensive open-source payment system that provides a complete solution for payment processing, transaction management, and merchant services. Built with modern architecture and industry best practices, it offers a robust and scalable platform for handling various payment scenarios.
 
 ### Core Features
 
@@ -81,7 +81,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](https:
 
 ## 🌟 项目概述
 
-OpenPaymentHub是一个全面的开源支付系统，提供完整的支付处理、交易管理和商户服务解决方案。该系统采用现代架构和行业最佳实践构建，为各种支付场景提供强大且可扩展的平台。
+Payment-project，提供完整的支付处理、交易管理和商户服务解决方案。该系统采用现代架构和行业最佳实践构建，为各种支付场景提供强大且可扩展的平台。
 
 ### 核心功能
 
