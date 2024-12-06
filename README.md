@@ -1,6 +1,6 @@
-# Payment-project 开源的支付系统
+# Payment-project 优付支付系统
 
-[English](#english) | [中文](#中文)
+[中文](#中文) | [English](#english)
 
 <div id="english">
 
